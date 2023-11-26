@@ -3,6 +3,7 @@
 # 목차
 ### [1. kafka 실행](#kafka-실행)
 ### [2. kafka shell script](#kafka-shell-script)
+### [3. 프로듀서 애플리케이션 개발](#3-프로듀서-애플리케이션-개발)
 ---
 
 # kafka 실행
@@ -219,3 +220,30 @@ hello-group     hello.kafka     0          11              16              5    
   - 이전 데이터부터 지정한 오프셋까지의 레코드를 모두 삭제
 - kafka-dump-log.sh
   - 카프카 운영 시 세그먼트 로그 확인
+
+
+# 프로듀서 애플리케이션 개발
+### ✅ 프로듀서
+![](/images/producer.png)
+- 리더 파티션을 가지고 있는 카프카 브로커와 직접 통신
+- ProducerRecord : 토픽, 파티션, 타임스탬프, 메시지키, 메시지 값을 가짐
+- Partitioner : 어느 파티션으로 전송할 지 지정하는 파티셔너
+  - `UniformSticky Partitioner` (default)
+    - key O : key의 해시값과 파티션을 매칭하여 레코드 전송
+    - key X : Accumulator에서 record들이 묶일 때 까지 기다렸다가 전송
+  - RoundRobinPartitioner
+    - key O : key의 해시값과 파티션을 매칭하여 레코드 전송
+    - key X : record가 들어오는 대로 파티션 순회하며 전송, 전송 성능이 낮음
+  - Custom Partitioner : 인터페이스 상속해서 사용
+  - 파티션 개수가 변경 될 경우, 메시지 키와 파티션 번호 매칭이 깨지게 되므로 처음부터 설계할 때 파티션 개수를 넉넉하게 가져가도록 함.
+- Accumulator : 배치로 묶어 전송할 데이터를 모으는 버퍼
+  - 한번에 최대한 많은 데이터를 묶어서 클러스터로 보내면서 높은 데이터 처리량을 가질 수 있음.
+
+  ### ✅ 프로듀서 옵션
+- `bootstrap.servers` : 프로듀서가 데이터를 전송할 대상 카프카 클러스터 브로커
+- `key.serializer` : 레코드의 메시지 키를 직렬화하는 클래스 지정
+- `value.serializer` : 레코드의 메시지 값을 직렬화 하는 클래스 지정
+- acks : 프로듀서가 전송한 데이터가 정상적으로 저장되었는지 전송 성공여부 확인
+- linger.ms : 배치 전송하기 전까지 기다리는 최소 시간, default 0
+- retries : 브로커로부터 에러를 받고 난 뒤 재전송을 시도하는 횟수
+- enable.idempotence : 멱등성 프로듀서로 동작할지 여부 설정. default false
