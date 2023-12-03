@@ -2,6 +2,7 @@
 
 # 목차
 ### [1. kafka 실행](#kafka-실행)
+### [1-1. kafka 실행: window ver.](#kafka-실행-window-ver)
 ### [2. kafka shell script](#kafka-shell-script)
 ### [3. 프로듀서 애플리케이션 개발](#프로듀서-애플리케이션-개발)
 ---
@@ -74,6 +75,38 @@ $ bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
 $ sudo vi /etc/hosts
 
 127.0.0.1 my-kafka # <<추가!
+```
+
+# kafka 실행 (window ver.)
+### ✅ 실행 환경 : Window PowerShell 7
+### ✅ [Kafka 다운로드 `ver.2.5.0`](https://kafka.apache.org/downloads)
+- trg 파일 압축 해제
+### ✅ server.properties 수정
+```bash
+> kafka_2.12-2.5.0\config\server.properties
+
+listeners=PLAINTEXT://localhost:9092
+advertised.listeners=PLAINTEXT://localhost:9092
+
+```
+
+### ✅ Zookeeper 실행
+```bash
+$ .\bin\windows\kafka-console-consumer.bat --bootstrap-server localhost:9092
+
+```
+
+### ✅ Kafka broker 실행
+```bash
+$ .\bin\windows\kafka-server-start.bat .\config\server.properties
+```
+
+### ✅ 실행 확인
+```bash
+$ .\bin\windows\kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic test --from-beginning
+
+testMessage
+hello
 ```
 
 # kafka shell script
