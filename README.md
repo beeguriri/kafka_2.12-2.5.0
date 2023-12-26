@@ -1,5 +1,6 @@
-아파치 카프카 애플리케이션 프로그래밍을 공부 합니다!
+### ✨ 아파치 카프카 애플리케이션 프로그래밍을 공부 합니다!
 - 관련강의 : [[아파치 카프카 애플리케이션 프로그래밍] 개념부터 컨슈머, 프로듀서, 커넥트, 스트림즈까지!](https://inf.run/uCwV5)
+---
 
 # 목차
 ### [1. kafka 실행](#kafka-실행)
@@ -78,6 +79,7 @@ $ sudo vi /etc/hosts
 
 127.0.0.1 my-kafka # <<추가!
 ```
+---
 
 # kafka 실행 (window ver.)
 ### ✅ 실행 환경 : Window PowerShell 7
@@ -110,6 +112,7 @@ $ .\bin\windows\kafka-console-consumer.bat --bootstrap-server localhost:9092 --t
 testMessage
 hello
 ```
+---
 
 # kafka shell script
 ### ✅ kafka-topics.sh
@@ -255,7 +258,7 @@ hello-group     hello.kafka     0          11              16              5    
   - 이전 데이터부터 지정한 오프셋까지의 레코드를 모두 삭제
 - kafka-dump-log.sh
   - 카프카 운영 시 세그먼트 로그 확인
-
+---
 
 # 프로듀서 애플리케이션 개발
 ### ✅ 프로듀서
@@ -289,7 +292,7 @@ hello-group     hello.kafka     0          11              16              5    
   - `acks=0` : 리더 파티션에 데이터가 저장되었는지 확인 안함. 전송 속도가 중요한 경우 사용.
   - `acks=1` : 리더 파티션에만 정상 적재 되었는지 확인.  팔로워 파티션 동기화 확인 안함.
   - `acks=-1/all` : 리더, 팔로워 파티션 정상 적재 되었는지 모두 확인. 신뢰성 보장.
-
+---
 
 # 컨슈머 애플리케이션 개발
 ### ✅ 컨슈머
