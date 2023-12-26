@@ -96,7 +96,7 @@ advertised.listeners=PLAINTEXT://localhost:9092
 
 ### ✅ Zookeeper 실행
 ```bash
-$ .\bin\windows\kafka-console-consumer.bat --bootstrap-server localhost:9092
+$ .\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
 
 ```
 
