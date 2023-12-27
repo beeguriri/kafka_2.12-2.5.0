@@ -25,10 +25,14 @@ public class SimpleConsumer {
         configs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         configs.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
 
+        configs.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true); //default가 true임
+        configs.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, 60000); //interval 시간 마다 커밋 수행
+
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(configs);
 
         consumer.subscribe(Arrays.asList(TOPIC_NAME));
 
+        // 보통 무한루프 사용
         while (true) {
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(1));
             for (ConsumerRecord<String, String> record : records) {
