@@ -24,9 +24,3 @@ wendy:iPhone send to Jeju
 #### 💝 참고 : intelliJ 의 kafka extension 사용하여 produce 쉽게 하기
 ![](/images/intelliJ_kafka.png)
 
-### ✅ KStreamJoinGlobalKTableApplication 실행 결과 확인
-```bash
-
-```
-
-
