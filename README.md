@@ -382,6 +382,65 @@ hello-group     hello.kafka     0          11              16              5    
 - num.stream.threads : 스트림 프로세싱 실행 시 실행 될 스레드 개수 지정, defualt 1
 - state.dir : 상태기반 데이터 처리할 때 데이터를 저장할 디렉토리 지정
 
+#### ✅ 스트림즈 DSL - window processing
+- `메시지 키`를 기준으로 취합
+- 동일한 메시지 키가 동일한 파티션에 저장되는 것을 보장하지 못하면 관련 연산 불가
+- 커밋 시점마다 윈도우의 연산 데이터를 출력하기 때문에 동일한 윈도우 시간데이터는 `upsert`로 처리
+- 텀블링 윈도우
+  - 서로 겹치지 않은 윈도우를 특정 간격으로 지속적으로 처리
+  - 단위 시간당 데이터가 필요할 경우 사용
+- 호핑 윈도우
+  - 일정 시간 간격으로 겹치는 윈도우 존재
+- 슬라이딩 윈도우
+  - 호핑 윈도우와 유사하게 일정 시간간격으로 겹치는 윈도우 존재
+  - 데이터의 정확한 시간(system시간, record 시간)을 바탕으로 윈도우의 데이터를 취합하여 연산
+- 세션 윈도우
+  - 동일한 메시지 키의 데이터를 한 세션에 묶어 윈도우 크기를 길게 가져감
+  - 세션 만료 시간이 지나게 되면 윈도우의 데이터를 취합하여 연산
+
 ### ✅ 프로세서 API
 - 메시지 값의 종류에 따라 토픽을 가변적으로 전송 / 일정한 시간 간격으로 데이터 처리
 - Processor 또는 Transformer 인터페이스로 구현한 클래스 필요
+```java
+public class FilterProcessor implements Processor<String, String> {
+
+  private ProcessorContext context;
+  ...
+
+  @Override
+  public void process(String key, String value) {
+    //새로운 레코드가 들어올때마다
+    //각 값에 대해서 filtering 후 다음 프로세서로 넘기게 됨
+    if (value.length() > 5)
+      context.forward(key, value);
+      
+    //커밋을 명시적으로 표기
+    context.commit();
+  }
+  ...
+}
+
+public class SimpleKafkaProcessor {
+  ...
+
+  public static void main(String[] args) {
+    ...
+    //토폴로지 기준으로 데이터 처리
+    //소스 -> 프로세서(필터) -> 싱크
+    //소스, 싱크, 스트림 프로세서 각각 정의
+    Topology topology = new Topology();
+    topology.addSource("Source",
+                    STREAM_LOG)
+            .addProcessor("Process",
+                    () -> new FilterProcessor(),
+                    "Source")
+            .addSink("Sink",
+                    STREAM_LOG_FILTER,
+                    "Process");
+
+    KafkaStreams streaming = new KafkaStreams(topology, props);
+    streaming.start();
+  }
+}
+
+```
